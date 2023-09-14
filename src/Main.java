@@ -1,5 +1,13 @@
+import java.util.LinkedList;
+import java.util.ArrayList;
+import java.util.Objects;
+
 public class Main {
     public static void main(String[] args) {
-        System.out.println("Hello world!");
+        MyLinkedList<String> myLinkedList = new MyLinkedList<>();
+        for(int i=0; i< 10; i++) {
+            myLinkedList.add(""+i);
+        }
+        System.out.println(myLinkedList.get("5"));
     }
 }
