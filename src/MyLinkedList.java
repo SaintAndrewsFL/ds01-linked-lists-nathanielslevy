@@ -133,6 +133,10 @@ public class MyLinkedList<T> {
     public T remove(int index) {
         int idx = 0;
         Node current = head;
+        if (index == 0) {
+            head = current.next;
+            return current.getData();
+        }
         while (idx + 1 < index) {
             if (current.next == null) {
                 return null;
@@ -179,6 +183,19 @@ public class MyLinkedList<T> {
             current = current.next;
         }
         return null;
+    }
+//        c
+//        6 --> 5 --> 1 --> 2 --> 3 --> 4
+
+    public void reverse() {
+        Node current = tail;
+        int idx = 0;
+        int s = size();
+        while (idx < s) {
+            System.out.println(getLast());
+            set(idx, pollLast());
+            idx++;
+        }
     }
 
 

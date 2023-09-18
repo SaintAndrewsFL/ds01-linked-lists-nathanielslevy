@@ -8,6 +8,6 @@ public class Main {
         for(int i=0; i< 10; i++) {
             myLinkedList.add(""+i);
         }
-        System.out.println(myLinkedList.get("5"));
+        myLinkedList.reverse();
     }
 }
