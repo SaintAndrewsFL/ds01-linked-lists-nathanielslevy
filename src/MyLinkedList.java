@@ -48,6 +48,7 @@ public class MyLinkedList<T> {
     public void addLast(T newItem) {
         Node newNode = new Node(newItem);
         tail.setNext(newNode);
+        tail = newNode;
     }
 
     public void clear() {
@@ -184,22 +185,6 @@ public class MyLinkedList<T> {
         }
         return null;
     }
-//        c
-//        6 --> 5 --> 1 --> 2 --> 3 --> 4
-
-    public void reverse() {
-        Node current = tail;
-        int idx = 0;
-        int s = size();
-        while (idx < s) {
-            System.out.println(getLast());
-            set(idx, pollLast());
-            idx++;
-        }
-    }
-
-
-
 
 
     public class Node {

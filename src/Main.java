@@ -8,6 +8,8 @@ public class Main {
         for(int i=0; i< 10; i++) {
             myLinkedList.add(""+i);
         }
-        myLinkedList.reverse();
+        myLinkedList.addLast("100");
+        System.out.println(myLinkedList.poll());
+        System.out.println(myLinkedList.size());
     }
 }
