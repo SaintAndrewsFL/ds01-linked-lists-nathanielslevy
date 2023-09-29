@@ -1,35 +1,87 @@
 public class MyLinkedList<T> {
     private Node head;
     private Node tail;
+    private boolean circular;
+    private boolean doublyLinked;
+    private boolean normal;
+    private boolean both;
 
-    public boolean add(T newItem) {
+    public MyLinkedList() {
+        this.circular = false;
+        this.doublyLinked = false;
+    }
+
+    public MyLinkedList(boolean circular, boolean doublyLinked) {
+        this.circular = circular;
+        this.doublyLinked = doublyLinked;
+        normal = !circular && !doublyLinked;
+        both = circular && doublyLinked;
+    }
+
+    public boolean add(T newItem) { //updated
         Node newNode = new Node(newItem);
-        if(head==null) {
+        int idx = 0;
+        if (head == null) {
             head = newNode;
-            return true;
+        }
+        else if (! circular && ! doublyLinked) {
+            if (head.next == null) {
+                tail = newNode;
+                head.setNext(tail);
+            }
+            else {
+                tail.setNext(newNode);
+                tail = newNode;
+            }
+            }
+        else if (! circular) {
+            if (head.next == null) {
+                tail = newNode;
+                head.setNext(tail);
+                tail.setBack(head);
+            }
+            else {
+                tail.setNext(newNode);
+                newNode.setBack(tail);
+                tail = newNode;
+            }
+        }
+        else if (! doublyLinked) {
+            if (head.next == null) {
+                tail = newNode;
+                head.setNext(tail);
+                tail.setNext(head);
+            }
+            else {
+                tail.setNext(newNode);
+                newNode.setNext(head);
+                tail = newNode;
+            }
         }
         else {
-            Node current = head;
-
-            while(current.next!=null) {
-                current = current.next;
+            if (head.next == null) {
+                tail = newNode;
+                head.setNext(tail);
+                tail.setBack(head);
+                tail.setNext(head);
+                head.setBack(tail);
             }
-            current.next = newNode;
-            tail = current.next;
+            tail.setNext(newNode);
+            newNode.setBack(tail);
+            newNode.setNext(head);
+            head.setBack(newNode);
+            tail = newNode;
         }
         return true;
     }
-
-
-    // [1,2,3,4,5,6] idx = 2
     public void addIndex(int index, T newItem) {
         Node newNode = new Node(newItem);
         Node current = head;
         if (index==0) {
-            Node second_half = current.next;
-            head = newNode;
-            head.setNext(current);
-            newNode.setNext(second_half);
+            add(newItem);
+        }
+        if (index == size() - 1) {
+            addLast(newItem);
         }
         int idx = 0;
         while(idx + 1 < index) {
@@ -39,7 +91,12 @@ public class MyLinkedList<T> {
         Node second_half = current.next;
         current.next = newNode;
         newNode.setNext(second_half);
+        if (doublyLinked) {
+            second_half.setBack(newNode);
+            newNode.setBack(current);
+        }
     }
+
 
     public void addFirst(T newItem) {
         addIndex(0, newItem);
@@ -47,27 +104,52 @@ public class MyLinkedList<T> {
 
     public void addLast(T newItem) {
         Node newNode = new Node(newItem);
-        tail.setNext(newNode);
-        tail = newNode;
+        if (head == null) {
+            head = newNode;
+        }
+        else if (size() == 1) {
+            tail = newNode;
+        }
+        else {
+            Node pen = tail;
+            tail.setNext(newNode);
+            tail = newNode;
+            if (both) {
+                tail.setNext(head);
+                head.setBack(tail);
+                tail.setBack(pen);
+            }
+            else if (circular) {
+                tail.setNext(head);
+            }
+            else if (doublyLinked) {
+                tail.setBack(pen);
+            }
+        }
     }
 
-    public void clear() {
+    public void clear() { // updated
         head = null;
         tail = null;
     }
 
-    public boolean contains(T newItem) {
+    public boolean contains(T newItem) { // updated
         Node current = head;
-        while (current != null) {
+        int idx = 0;
+        while (idx < size()) {
             if (current.getData().equals(newItem)) {
                 return true;
             }
             current = current.next;
+            idx++;
         }
         return false;
     }
 
-    public T get(int index) {
+    public T get(int index) { // updated
+        if (index >= size()) {
+            return null;
+        }
         Node current = head;
         int idx = 0;
         while (idx < index) {
@@ -80,18 +162,19 @@ public class MyLinkedList<T> {
         return null;
     }
 
-    public T getFirst() {
+    public T getFirst() { // updated
         return head.getData();
     }
 
-    public T getLast() {
+    public T getLast() { // updated
         return tail.getData();
     }
 
-    public int indexOf(T item) {
+
+    public int indexOf(T item) { // updated
         Node current = head;
         int idx = 0;
-        while (current != null) {
+        while (idx < size()) {
             if (current.getData().equals(item)) {
                 return idx;
             }
@@ -115,19 +198,52 @@ public class MyLinkedList<T> {
         return recentIdx;
     }
 
-    public T poll() {
+    public T poll() { // updated
         T item = head.getData();
         head = head.next;
+        if (normal) {
+            System.out.println("normal");
+            return item;
+        }
+        else if (both) {
+            System.out.println("both for poll");
+            head.setBack(tail);
+            tail.setNext(head);
+        }
+        else if (circular) {
+            tail.next = head;
+        }
+        else if (doublyLinked) {
+            head.next.setBack(head);
+        }
         return item;
     }
 
     public T pollLast() {
         T item = tail.getData();
         Node current = head;
-        while (current.next.next != null) {
+        int idx = 0;
+        while (idx + 3 < size()) {
             current = current.next;
+            idx++;
         }
-        tail = current;
+        Node pen = current;
+        tail = current.next;
+        if (both) {
+            tail.setNext(head);
+            tail.setBack(pen);
+            head.setBack(tail);
+        }
+        else if (doublyLinked) {
+            tail.setBack(pen);
+            tail.next = null;
+        }
+        else if (circular) {
+            tail.next = head;
+        }
+        else {
+            tail.next = null;
+        }
         return item;
     }
 
@@ -165,14 +281,17 @@ public class MyLinkedList<T> {
         return replacedObject;
     }
 
-    public int size() {
+    public int size() { // updated
         Node current = head;
         int idx = 0;
-        while (current != null) {
+        if (head == null) {
+            return 0;
+        }
+        while (current.next != null && current.next != head) {
             current = current.next;
             idx++;
-        }
-        return idx;
+    }
+        return idx + 1;
     }
 
     public T get(T item) {
@@ -190,18 +309,29 @@ public class MyLinkedList<T> {
     public class Node {
         private Node next;
         private T data;
+        private Node back;
 
         public Node(T data) {
             this.data = data;
+        }
+
+        public Node(T data, boolean circular, boolean doublyLinked) {
+            this.data = data;
+
+
         }
 
         public Node getNext() {
             return next;
         }
 
+        public Node getBack() { return back; }
+
         public void setNext(Node next) {
             this.next = next;
         }
+
+        public void setBack(Node back) {this.back = back; }
 
         public void setData(T data) {
             this.data = data;
@@ -211,7 +341,4 @@ public class MyLinkedList<T> {
             return data;
         }
     }
-
-
-
 }
