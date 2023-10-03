@@ -290,7 +290,7 @@ public class MyLinkedList<T> {
             System.out.println("Begin Moving");
             current = current.next;
             idx++;
-        }
+        }//
         System.out.println(current.getData());
         System.out.println("Idx is " + idx);
         T obj = current.next.getData();
