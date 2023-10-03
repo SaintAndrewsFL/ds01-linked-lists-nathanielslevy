@@ -18,7 +18,7 @@ public class MyLinkedList<T> {
         both = circular && doublyLinked;
     }
 
-    public boolean add(T newItem) { //updated
+    public boolean add(T newItem) { // updated
         Node newNode = new Node(newItem);
         int idx = 0;
         if (head == null) {
@@ -74,11 +74,11 @@ public class MyLinkedList<T> {
         }
         return true;
     }
-    public void addIndex(int index, T newItem) {
+    public void addIndex(int index, T newItem) { // updated
         Node newNode = new Node(newItem);
         Node current = head;
         if (index==0) {
-            add(newItem);
+            addFirst(newItem);
         }
         if (index == size() - 1) {
             addLast(newItem);
@@ -99,7 +99,29 @@ public class MyLinkedList<T> {
 
 
     public void addFirst(T newItem) {
-        addIndex(0, newItem);
+        Node newNode = new Node(newItem);
+        if (head == null) {
+            head = newNode;
+        }
+        else {
+            newNode.setNext(head);
+            head = newNode;
+            if (size() == 2) {
+                tail = head.next;
+            }
+            if (both) {
+                head.next.setBack(head);
+                head.setBack(tail);
+                tail.setNext(head);
+            }
+            if (circular) {
+                tail.setNext(head);
+            }
+            if (doublyLinked) {
+                head.next.setBack(head);
+            }
+        }
+
     }
 
     public void addLast(T newItem) {
@@ -219,7 +241,7 @@ public class MyLinkedList<T> {
         return item;
     }
 
-    public T pollLast() {
+    public T pollLast() { // updated
         T item = tail.getData();
         Node current = head;
         int idx = 0;
