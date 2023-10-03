@@ -98,7 +98,7 @@ public class MyLinkedList<T> {
     }
 
 
-    public void addFirst(T newItem) {
+    public void addFirst(T newItem) { // updated
         Node newNode = new Node(newItem);
         if (head == null) {
             head = newNode;
@@ -124,7 +124,7 @@ public class MyLinkedList<T> {
 
     }
 
-    public void addLast(T newItem) {
+    public void addLast(T newItem) { // updated
         Node newNode = new Node(newItem);
         if (head == null) {
             head = newNode;
@@ -210,7 +210,7 @@ public class MyLinkedList<T> {
         Node current = head;
         int idx = 0;
         int recentIdx = -1;
-        while (current != null) {
+        while (idx < size()) {
             if (current.getData().equals(item)) {
                 recentIdx = idx;
             }
@@ -270,25 +270,52 @@ public class MyLinkedList<T> {
     }
 
     public T remove(int index) {
+        if (index >= size()) {
+            return null;
+        }
         int idx = 0;
         Node current = head;
         if (index == 0) {
             head = current.next;
+            if (both) {
+                tail.setNext(head);
+                head.setBack(tail);
+            }
+            if (circular) {
+                tail.setNext(head);
+            }
             return current.getData();
         }
         while (idx + 1 < index) {
-            if (current.next == null) {
-                return null;
-            }
+            System.out.println("Begin Moving");
             current = current.next;
             idx++;
         }
-        if (current.next == null) {
-            return null;
-        }
-
+        System.out.println(current.getData());
+        System.out.println("Idx is " + idx);
         T obj = current.next.getData();
-        current.next = current.next.next;
+        if (both) {
+            current.setNext(current.next.next);
+            current.next.setBack(current);
+        }
+        if (doublyLinked) {
+            current.next.next.setBack(current);
+        }
+        if (circular) {
+            current.setNext(current.next.next);
+        }
+        if (normal) {
+            if (current == tail) {
+                current = null;
+            }
+            if (current.next == tail) {
+                current.next = null;
+                tail = current;
+            }
+            else {
+                current.setNext(current.next.next);
+            }
+        }
         return obj;
     }
 
@@ -316,15 +343,33 @@ public class MyLinkedList<T> {
         return idx + 1;
     }
 
-    public T get(T item) {
+    public T get(T item) { // updated
+        int idx = 0;
         Node current = head;
-        while (current != null) {
+        while (idx < size()) {
             if (current.getData().equals(item)) {
                 return item;
             }
             current = current.next;
+            idx++;
         }
         return null;
+    }
+
+    public boolean isCircular() {
+        Node hare = head;
+        Node tortoise = head;
+        while (tortoise != null && hare!= null) {
+            hare = hare.next.next;
+            tortoise = tortoise.next;
+            if (tortoise == hare) {
+                return true;
+            }
+            if (tortoise == head) {
+                return false;
+            }
+        }
+        return false;
     }
 
 
