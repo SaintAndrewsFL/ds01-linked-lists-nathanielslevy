@@ -10,4 +10,4 @@ public class Main {
         }
         myLinkedList.addIndex(0,"hello");
     }
-}//
+}
